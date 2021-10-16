@@ -1,19 +1,19 @@
-const prompts = require('prompts');
+const prompts = require('prompts')
 const promptOpenCurrentInterval = require('./open_current_interval.js')
 const promptViewIntervalHistory = require('./view_interval_history')
-const choices  = [
+const choices = [
   {
-    'title':'Done',
-    'value': -1
+    title: 'Done',
+    value: -1
   },
   {
-    'title':'Open Current Interval',
-    'value':'opencurrentinterval' 
+    title: 'Open Current Interval',
+    value: 'opencurrentinterval'
   },
   {
-    'title':'View Interval History',
-    'value':'viewintervalhistory' 
-  },
+    title: 'View Interval History',
+    value: 'viewintervalhistory'
+  }
 ]
 
 module.exports = async () => {
@@ -24,11 +24,11 @@ module.exports = async () => {
     choices
   }
 
-  let response 
+  let response
 
-  while(true){
+  while (true) {
     response = await prompts(staticPrompt)
-    switch(response.menu){
+    switch (response.menu) {
       case -1:
         return
       case 'opencurrentinterval':
@@ -40,5 +40,3 @@ module.exports = async () => {
     }
   }
 }
-     
-     

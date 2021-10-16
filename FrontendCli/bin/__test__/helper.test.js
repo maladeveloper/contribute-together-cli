@@ -1,14 +1,13 @@
-const { findUnpaidUsers, findUserName, findIncomeNotEnteredUsers  } = require('../helper.js')
-
+const { findUnpaidUsers, findUserName, findIncomeNotEnteredUsers } = require('../helper.js')
 
 describe('findUnpaidUsers', () => {
-  describe( 'when there are users who have not paid', () => {
-    const payments = [ { id: 3, interval: 5, user: 'ANU0001', amount: 432 }]
+  describe('when there are users who have not paid', () => {
+    const payments = [{ id: 3, interval: 5, user: 'ANU0001', amount: 432 }]
     const allUsers = [
       { id: 'ANU0001', name: 'Anuratha Srikumar' },
       { id: 'MAI0001', name: 'Maiyuren Srikumar' },
       { id: 'MAL0001', name: 'Malavan Srikumar' },
-      { id: 'SUP0001', name: 'Suppiah Srikumar' },
+      { id: 'SUP0001', name: 'Suppiah Srikumar' }
     ]
     it('returns the users who have not paid', () => {
       const unpaidUsers = findUnpaidUsers(allUsers, payments)
@@ -18,13 +17,13 @@ describe('findUnpaidUsers', () => {
 })
 
 describe('findUserName', () => {
-  describe( 'when there are users who have not paid', () => {
-    const userId  = 'MAL0001'
+  describe('when there are users who have not paid', () => {
+    const userId = 'MAL0001'
     const allUsers = [
       { id: 'ANU0001', name: 'Anuratha Srikumar' },
       { id: 'MAI0001', name: 'Maiyuren Srikumar' },
       { id: 'MAL0001', name: 'Malavan Srikumar' },
-      { id: 'SUP0001', name: 'Suppiah Srikumar' },
+      { id: 'SUP0001', name: 'Suppiah Srikumar' }
     ]
     it('returns the users who have not paid', () => {
       const name = findUserName(allUsers, userId)
@@ -34,14 +33,13 @@ describe('findUserName', () => {
 })
 describe('findIncomeNotEnteredUsers', () => {
   describe('when there are users who have not entered their income', () => {
-
-    const allUsers =  [
+    const allUsers = [
       { id: 'ANU0001', name: 'Anuratha Srikumar' },
       { id: 'MAI0001', name: 'Maiyuren Srikumar' },
       { id: 'MAL0001', name: 'Malavan Srikumar' },
-      { id: 'SUP0001', name: 'Suppiah Srikumar' },
+      { id: 'SUP0001', name: 'Suppiah Srikumar' }
     ]
-    const incomeBySource =  {
+    const incomeBySource = {
       ANU0001: { 'Medical Centre': 795 },
       MAI0001: {
         PhD: 1195,
@@ -53,7 +51,7 @@ describe('findIncomeNotEnteredUsers', () => {
     }
 
     it('finds the users who have not entered their income', () => {
-      const incomeNotEnteredUsers = findIncomeNotEnteredUsers(allUsers, incomeBySource)    
+      const incomeNotEnteredUsers = findIncomeNotEnteredUsers(allUsers, incomeBySource)
       expect(incomeNotEnteredUsers).toEqual(['MAL0001'])
     })
   })

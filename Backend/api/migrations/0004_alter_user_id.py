@@ -13,6 +13,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='id',
-            field=models.CharField(max_length=7, primary_key=True, serialize=False),
+            field=models.CharField(
+                max_length=7,
+                primary_key=True,
+                serialize=False),
         ),
     ]

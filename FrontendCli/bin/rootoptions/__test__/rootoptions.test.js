@@ -1,6 +1,6 @@
 const optionCurrentIntervalStatus = require('../current_interval_status')
 const optionIntervalStatus = require('../interval_status')
-const { restartServer, PORT, turnOffServer} = require('../../utils/api')
+const { restartServer } = require('../../utils/api')
 
 jest.setTimeout(300000)
 

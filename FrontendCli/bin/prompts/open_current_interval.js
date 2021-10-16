@@ -1,29 +1,29 @@
-const prompts = require('prompts');
+const prompts = require('prompts')
 const promptAddIncomes = require('./add_income')
 const optionCurrentIntervalStatus = require('../rootoptions/current_interval_status')
 const { getIntervals } = require('../utils/api_get')
 
-const choices  = [
+const choices = [
   {
-    'title':'Done',
-    'value': -1
+    title: 'Done',
+    value: -1
   },
   {
-    'title':'View Status',
-    'value':'viewstatus' 
+    title: 'View Status',
+    value: 'viewstatus'
   },
   {
-    'title':'Add Incomes',
-    'value':'addincomes' 
+    title: 'Add Incomes',
+    value: 'addincomes'
   },
   {
-    'title':'Edit Incomes',
-    'value':'editincomes' 
+    title: 'Edit Incomes',
+    value: 'editincomes'
   },
   {
-    'title':'Confirm  Payments',
-    'value':'confirmpayments' 
-  },
+    title: 'Confirm  Payments',
+    value: 'confirmpayments'
+  }
 ]
 
 module.exports = async () => {
@@ -34,16 +34,16 @@ module.exports = async () => {
     choices
   }
 
-  const currIntId = (await getIntervals())[0]['id']
-  let response 
+  const currIntId = (await getIntervals())[0].id
+  let response
 
-  while(true){
+  while (true) {
     response = await prompts(staticPrompt)
-    switch(response.oci){
+    switch (response.oci) {
       case -1:
         return
       case 'viewstatus':
-        await optionCurrentIntervalStatus() 
+        await optionCurrentIntervalStatus()
         break
       case 'addincomes':
         await promptAddIncomes(currIntId)

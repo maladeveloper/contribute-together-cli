@@ -14,6 +14,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='incomesource',
             name='user',
-            field=models.ForeignKey(default='MAL0001', on_delete=django.db.models.deletion.CASCADE, to='api.user'),
+            field=models.ForeignKey(
+                default='MAL0001',
+                on_delete=django.db.models.deletion.CASCADE,
+                to='api.user'),
         ),
     ]
