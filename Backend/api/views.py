@@ -1,7 +1,9 @@
 import math
+from django.forms.models import model_to_dict
+import pdb
 from datetime import date, timedelta
 from api.models import User, IncomeSource, Income, Payment, Interval
-from api.helpers import apply_tax
+from api.helpers import apply_tax, get_average_incomes, get_tax_dict
 from api.serializers import UserSerializer, UserIncomeSourceSerializer, IncomeSerializer, PaymentSerializer, IntervalSerializer
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -11,37 +13,24 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 from django.db.models import Sum, F, Avg
 
-INTERVALS_PER_PERIOD = 2
 DAYS_IN_INTERVAL = 14
 
 # Create your views here.
 def index(request):
     return HttpResponse('Hello world')
 
-def get_average_incomes(interval_id, num):
+# POST
 
-    c_i = Interval.objects.filter(id=interval_id).first()
-    avg_i = Interval.objects.filter(end_date__lte=c_i.end_date).order_by('-start_date')[:num]
-    real_num = len(avg_i)
-    sd = avg_i[len(avg_i) - 1].start_date
-    ed = avg_i[0].end_date
+class IncomeView(generics.CreateAPIView):
+    queryset = Income.objects.all()
+    serializer_class = IncomeSerializer
 
-    incs = Income.objects.filter(date__gte=sd, date__lte=ed)
-    avg_incs = incs.values('incomesource__user').annotate(user=F('incomesource__user'), amount=Avg('amount')).values('user', 'amount')
-    return [avg_incs,real_num]
+class PaymentView(generics.CreateAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
 
-@api_view(['GET'])
-def tax(request, interval):
-    """ GET the tax due for a specific interval """
-    num = int(request.GET.get('num', 2))
-    [avg_incs,real_num] = get_average_incomes(interval, num)
-    amount_arr = [inc['amount'] for inc in avg_incs]
-    user_arr = [inc['user'] for inc in avg_incs]
-    income_dict = dict(zip(user_arr, amount_arr))
-    pay_dict = apply_tax(income_dict)
+# GET
 
-    return Response({'pay_dict':pay_dict, 'num':real_num})
-    
 class IntervalLatestListView(APIView):
     def add_latest_intervals(self, c_d, l_i):
         d_d = c_d - l_i.end_date
@@ -72,18 +61,47 @@ class UserIncomeSourceListView(APIView):
         serializer = UserIncomeSourceSerializer(income_sources, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+def tax_latest(request):
+    l_i = Interval.objects.all().order_by('-start_date').first() 
+    return Response(get_tax_dict(l_i.id))
 
+# Specified by interval
 class IntervalPaymentsListView(APIView):
     def get(self, request, interval):
         payments = Payment.objects.filter(interval_id=interval)
         serializer = PaymentSerializer(payments, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+def tax(request, interval):
+    """ GET the tax due for a specific interval """
+    return Response(get_tax_dict(interval))
 
-class IncomeView(generics.CreateAPIView):
-    queryset = Income.objects.all()
-    serializer_class = IncomeSerializer
+@api_view(['GET'])
+def income_per_interval(request, interval):
+    i_t = Interval.objects.get(id=interval)
+    incomes = Income.objects.filter(date__gte=i_t.start_date, date__lte=i_t.end_date).annotate(user=F('incomesource__user'))
+    inc_array = [ { 'user':i.user, 'amount':i.amount, 'incomesource':i.incomesource.name} for i in incomes]
+    users = incomes.values_list('user', flat=True).distinct()
+    return_dict = {}
+    for user in users:
+        sources = {}
+        for inc in inc_array:
+            if inc['user'] == user:
+                source_name  =inc['incomesource'] 
+                sources[source_name] = sources.get(source_name, 0) + inc['amount']
+        return_dict[user] = sources
+    return Response(return_dict)
 
-class PaymentView(generics.CreateAPIView):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
+
+@api_view(['GET'])
+def avg_income_per_interval(request, interval):
+    avg_incs = get_average_incomes(interval)
+    ret_dict = {}
+    for inc in avg_incs:
+        ret_dict[inc['user']] = inc['amount']
+    return Response(ret_dict)
+
+
+

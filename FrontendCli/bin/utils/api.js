@@ -8,7 +8,7 @@ const exec = util.promisify(require('child_process').exec);
 const axios = require('axios');
 const PORT = 8000
 BASE_URL = `http://127.0.0.1:${PORT}/api/`
-WAIT_SEC = 3000
+WAIT_SEC = 6000
 
 
 const restartServer = async function (){
