@@ -2,7 +2,6 @@ from django.db.models import Sum, F
 from api.models import Income, Interval
 
 INTERVALS_PER_PERIOD = 2
-TOTAL_TAX = 1100
 DEGREE_POLY = 1
 '''
 Applies tax on the user's income and returns the tax value.
@@ -11,11 +10,11 @@ Output: Tax per user e.g {'MAL001': 296, 'SRI001': 337, 'ANU001': 72, 'MAI001': 
 '''
 
 
-def apply_tax(user_dict):
+def apply_tax(user_dict, total_tax):
     income_list = list(user_dict.values())
 
     try:
-        div_amount = TOTAL_TAX / \
+        div_amount = total_tax / \
             sum([income**(DEGREE_POLY + 1) for income in income_list])
     except ZeroDivisionError:  # Triggered if all income is 0.
         return {user_name: 0 for user_name in user_dict.keys()}
@@ -51,4 +50,6 @@ def get_tax_dict(interval_id):
     amount_arr = [inc['amount'] for inc in avg_incs]
     user_arr = [inc['user'] for inc in avg_incs]
     income_dict = dict(zip(user_arr, amount_arr))
-    return apply_tax(income_dict)
+
+    total_tax = Interval.objects.get(id=interval_id).amount
+    return apply_tax(income_dict, total_tax)

@@ -5,10 +5,12 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
 
+    # PATCH
+    path('interval/<str:interval>/amount/', views.change_interval_amount),
+
     # POST
     path('income/', views.IncomeView.as_view()),
     path('payment/', views.PaymentView.as_view()),
-
     # GET
     path('intervals/', views.IntervalLatestListView.as_view()),
     path('users/', views.UserListView.as_view()),

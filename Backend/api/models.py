@@ -19,6 +19,7 @@ class IncomeSource(models.Model):
 class Interval(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
+    amount = models.IntegerField(default=1100)
 
 
 class Income(models.Model):

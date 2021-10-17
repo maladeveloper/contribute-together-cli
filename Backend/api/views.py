@@ -1,5 +1,6 @@
 import math
 from datetime import date, timedelta
+import json
 
 from django.http import HttpResponse
 from django.db.models import F
@@ -11,8 +12,8 @@ from rest_framework.decorators import api_view
 from api.models import User, IncomeSource, Income, Payment, Interval
 from api.helpers import get_average_incomes, get_tax_dict
 from api.serializers import (
-        UserSerializer, UserIncomeSourceSerializer, IncomeSerializer,
-        PaymentSerializer, IntervalSerializer
+    UserSerializer, UserIncomeSourceSerializer, IncomeSerializer,
+    PaymentSerializer, IntervalSerializer
 )
 # pylint: disable=unused-argument,no-self-use
 
@@ -23,6 +24,18 @@ DAYS_IN_INTERVAL = 14
 
 def index(request):
     return HttpResponse('Hello world')
+
+# PATCH
+
+
+@api_view(['PATCH'])
+def change_interval_amount(request, interval):
+    new_amount = json.loads(request.body.decode('utf-8'))['amount']
+    i = Interval.objects.get(id=interval)
+    i.amount = new_amount
+    i.save()
+    return HttpResponse(status=204)
+
 
 # POST
 
@@ -35,6 +48,7 @@ class IncomeView(generics.CreateAPIView):
 class PaymentView(generics.CreateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+
 
 # GET
 

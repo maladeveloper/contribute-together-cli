@@ -20,7 +20,7 @@ class IntervalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Interval
-        fields = ['id', 'start_date', 'end_date']
+        fields = ['id', 'start_date', 'end_date', 'amount']
 
 
 class UserIncomeSourceSerializer(serializers.ModelSerializer):

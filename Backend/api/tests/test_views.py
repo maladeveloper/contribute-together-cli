@@ -12,6 +12,32 @@ from ..models import User, IncomeSource, Income, Interval, Payment
 # initialize the APIClient app
 client = Client()
 
+# PATCH
+
+
+class ChangeIntervalAmount(TestCase):
+    def set_up(self):
+        User.objects.create(id='TEST000', name='Test')
+        Interval.objects.create(
+            start_date='2021-10-04', end_date='2021-10-17')
+
+    def test_changing_latest_interval(self):
+        self.set_up()
+        interval = Interval.objects.first()
+        new_amount = 1234
+        amount_obj = {'amount': new_amount}
+
+        response = client.patch(
+            '/api/interval/' + str(interval.id) + '/amount/',
+            json.dumps(amount_obj),
+            content_type='application/json'
+        )
+        self.assertEqual(
+            Interval.objects.get(id=interval.id).amount,
+            new_amount
+        )
+        self.assertEqual(response.status_code, 204)
+
 # POST
 
 
@@ -57,6 +83,7 @@ class PaymentTest(TestCase):
         del pay_from_db['id']
         self.assertEqual(pay_from_db, payment_obj)
 
+
 # GET
 
 
@@ -74,7 +101,7 @@ class UserListTest(TestCase):
         # get from db
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         suffix = 0
-        for user  in response.data:
+        for user in response.data:
             self.assertEqual(
                 dict(user), {
                     'id': 'TES000' + str(suffix), 'name': 'Test ' + str(suffix)})
@@ -97,6 +124,10 @@ class IntervalListTest(TestCase):
         client.get('/api/intervals/', follow=True)
         s_d = date.today()
         i_s = Interval.objects.all().order_by('-end_date')
+        self.assertEqual(
+            sorted([*model_to_dict(i_s[0])]),
+            sorted(['end_date', 'start_date', 'id', 'amount'])
+        )
         self.assertEqual(len(i_s), 5)
         l_i = i_s.first()
         self.assertEqual(l_i.end_date, s_d + timedelta(8))
