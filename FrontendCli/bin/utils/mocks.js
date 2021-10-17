@@ -8,4 +8,8 @@ const mockPostNewIncome = () => {
   ).reply(201)
 }
 
-module.exports = { mockPostNewIncome }
+const mockPatchNewIntAmount = (id) => {
+  nock(BASE_URL, { allowUnmocked: true }).intercept('/interval/' + id.toString() + '/amount/', 'PATCH').reply(204)
+}
+
+module.exports = { mockPostNewIncome, mockPatchNewIntAmount }
