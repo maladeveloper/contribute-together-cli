@@ -1,5 +1,4 @@
 const { getIntervals, getTaxByInterval, getAllUsers, getIncomeSourcesByUser, getPaymentByInterval, getIncByIntWithSources, getIncByIntAveraged } = require('../api_get.js')
-const { restartServer } = require('../api.js')
 
 const expectATaxObj = (taxes) => {
   expect(typeof taxes).toBe('object')
@@ -27,7 +26,6 @@ jest.setTimeout(300000)
 
 describe('getAllUsers', () => {
   it('should return a object with correct keys', async () => {
-    await restartServer()
     const users = await getAllUsers()
     expect(Array.isArray(users)).toBe(true)
     users.forEach(user => {
@@ -39,7 +37,6 @@ describe('getAllUsers', () => {
 
 describe('getIntervals', () => {
   it('should return the intervals', async () => {
-    await restartServer()
     const intervals = await getIntervals()
     expect(Array.isArray(intervals)).toBe(true)
     intervals.forEach((interval) => {
@@ -55,7 +52,6 @@ describe('getIntervals', () => {
 
 describe('getIncomeSourcesByUser', () => {
   it('should return the income sources', async () => {
-    await restartServer()
     const userId = 'MAL0001'
     const incomeSources = await getIncomeSourcesByUser(userId)
     expect(typeof incomeSources).toBe('object')
@@ -68,7 +64,6 @@ describe('getIncomeSourcesByUser', () => {
 
 describe('getPaymentByInterval', () => {
   it('should return the payment object', async () => {
-    await restartServer()
     const intervalId = '5'
     const payment = await getPaymentByInterval(intervalId)
     expectPaymentsArr(payment)
@@ -77,7 +72,6 @@ describe('getPaymentByInterval', () => {
 
 describe('getTaxByInterval', () => {
   it('should return a object with correct keys', async () => {
-    await restartServer()
     const taxes = await getTaxByInterval(5)
     expectATaxObj(taxes)
   })
@@ -85,7 +79,6 @@ describe('getTaxByInterval', () => {
 
 describe('getIncByIntWithSources', () => {
   it('should return the income of a user with their sources', async () => {
-    await restartServer()
     const incomes = await getIncByIntWithSources(5)
     expect(typeof incomes).toBe('object')
     Object.keys(incomes).forEach(user => {
@@ -100,7 +93,6 @@ describe('getIncByIntWithSources', () => {
 
 describe('getIncByIntAveraged', () => {
   it('should return the income of a user with their sources', async () => {
-    await restartServer()
     const incomes = await getIncByIntAveraged(5)
     expectATaxObj(incomes)
   })
