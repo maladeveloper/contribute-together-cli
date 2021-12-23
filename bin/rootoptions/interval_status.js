@@ -5,7 +5,10 @@ module.exports = async (intervalId) => {
   // Api calls
   const allUsers = await getAllUsers()
   const payments = await getPaymentByInterval(intervalId)
-  const tax = await getTaxByInterval(intervalId)
+  let tax = {}
+  try{
+    tax = await getTaxByInterval(intervalId)
+  }catch(e){}
   const incomeBySource = await getIncByIntWithSources(intervalId)
   const incomeAveraged = await getIncByIntAveraged(intervalId)
   const payload = { allUsers, tax, payments, incomeBySource, incomeAveraged }
