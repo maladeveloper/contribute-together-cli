@@ -11,14 +11,14 @@ module.exports = (incomeBySource, allUsers) => {
 
   Object.keys(incomeBySource).forEach(userId => {
     const incomeSources = incomeBySource[userId]
-    const totalIncome = Object.values(incomeSources).reduce((partialSum, a) => partialSum + a, 0)
+    const totalIncome = Object.values(incomeSources).reduce((partialSum, a) => partialSum + a['amount'], 0)
     const icTable = new Table({
       columns: [
         { name: 'uname', title: findUserName(allUsers, userId) + ' - $' + totalIncome }
       ]
     })
     Object.keys(incomeSources).forEach(incomeSource => {
-      icTable.addRow({ uname: incomeSource + ' - $' + incomeSources[incomeSource] })
+      icTable.addRow({ uname: incomeSource + ' - $' + incomeSources[incomeSource]['amount'] })
     })
     icTable.printTable()
   })
